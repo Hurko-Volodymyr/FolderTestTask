@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    @using Learn2MVC.Models
+    @model List<Folder>
+
+}
+
+<div class="text-left">
+    @foreach (var folder in GetChildFolders(Model, 0))
+    {
+        <a href='@Url.Action("FolderDetails", "Home", new { id = folder.Id })' class="display-4">
+            @folder.Name
+        </a>
+    }
+</div>
+
+@functions
+{
+    public List<Folder> GetChildFolders(List<Folder> folders, int parentId)
+    {
+        return folders.Where(f => f.ParentId == parentId).ToList();
+    }
+}
