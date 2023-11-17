@@ -1,6 +1,6 @@
 using Learn2MVC.Data;
 using Learn2MVC.Models;
-using Learn2MVC.Services;
+using Learn2MVC.Services.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;

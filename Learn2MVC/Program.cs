@@ -1,7 +1,10 @@
 using Learn2MVC.Data;
 using Learn2MVC.Entity;
 using Learn2MVC.Models;
+using Learn2MVC.Repositories;
+using Learn2MVC.Repositories.Abstractions;
 using Learn2MVC.Services;
+using Learn2MVC.Services.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -12,10 +15,12 @@ namespace Learn2MVC
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddScoped<IFolderRepository, FolderRepository>();
             builder.Services.AddScoped<IFolderService, FolderService>();
             builder.Services.AddDbContext<AppDbContext>(options =>
                     options.UseInMemoryDatabase("InMemoryDatabase"));
             builder.Services.AddControllersWithViews();
+            builder.Services.AddRazorPages();
 
 
             var app = builder.Build();
@@ -43,22 +48,13 @@ namespace Learn2MVC
             using (var scope = app.Services.CreateScope())
             {
                 var serviceProvider = scope.ServiceProvider;
-                var dbContext = serviceProvider.GetRequiredService<AppDbContext>(); 
-                if (!dbContext.Folders.Any())
-                {
-
-                    dbContext.Folders.AddRange(
-                         new Folder() { Id = 1, Name = "Creating Digital Images", ParentId = 0 },
-                         new Folder() { Id = 2, Name = "Resources", ParentId = 1 },
-                         new Folder() { Id = 3, Name = "Evidence", ParentId = 1 },
-                         new Folder() { Id = 4, Name = "Graphic Products", ParentId = 1 },
-                         new Folder() { Id = 5, Name = "Primary Sources", ParentId = 2 },
-                         new Folder() { Id = 6, Name = "Secondary Sources", ParentId = 2 },
-                         new Folder() { Id = 7, Name = "Proces", ParentId = 4 },
-                         new Folder() { Id = 8, Name = "Final Product", ParentId = 4 });
-
-                    dbContext.SaveChanges();
-                }
+                var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
+                var folderService = serviceProvider.GetRequiredService<IFolderService>();
+                var filePath = "Structure.txt";
+                var exportFilePath = "ImportedStructure.txt";
+                folderService.ImportFromTextFile(filePath);
+                folderService.ExportToTextFile(exportFilePath);
+                folderService.ImportFromTextFile(exportFilePath);
             }
 
             app.Run();
