@@ -6,24 +6,19 @@
 
 <h2>@Model.Name</h2>
 
-<div>
-    <h3>Child Folders:</h3>
-    <ul>
-        @foreach (var childFolder in GetChildFolders(Model.Id))
-        {
-            <li>
-                <a href='@Url.Action("FolderDetails", "Home", new { id = childFolder.Id })'>
-                    @childFolder.Name
-                </a>
-            </li>
-        }
-    </ul>
-</div>
-
-@functions
+@if (Model.Children != null && Model.Children.Any())
 {
-    public List<Folder> GetChildFolders(int parentId)
-    {
-        return Model.Children?.Where(f => f.ParentId == parentId).ToList() ?? new List<Folder>();
-    }
+    <div>
+        <h3>Child Folders:</h3>
+        <ul>
+            @foreach (var childFolder in Model.Children)
+            {
+                <li>
+                    <a href='@Url.Action("FolderDetails", "Home", new { id = childFolder.Id })'>
+                        @childFolder.Name
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
 }
